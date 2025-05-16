@@ -82,6 +82,29 @@
 
             paddle.y += dy;
 
+
+            let isCollidingPlayer = checkCollision({x1: paddle.x, y1: paddle.y, x2: paddle.x + paddle.width, y2: paddle.y + paddle.height}, ball)
+            let isCollidingCpu = checkCollision({x1: cpu_paddle.x, y1: cpu_paddle.y, x2: cpu_paddle.x + cpu_paddle.width, y2: cpu_paddle.y + cpu_paddle.height}, ball)
+
+
+            if (isCollidingPlayer) {
+                ball.x -= ball.xv;
+                ball.y -= ball.yv;
+                ball.xv *= -1;
+                score += 1;
+                console.log(score);
+                
+            }
+
+            if (isCollidingCpu) {
+                ball.x -= ball.xv;
+                ball.y -= ball.yv;
+                ball.xv *= -1;
+                
+
+            }
+
+
             cpu_paddle.y = ball.y - cpu_paddle.height / 2;
 
             if (cpu_paddle.y > cpu_paddle.max_y) {
@@ -100,19 +123,7 @@
                 paddle.y = paddle.min_y
             }
 
-            let isCollidingPlayer = checkCollision({x1: paddle.x, y1: paddle.y, x2: paddle.x + paddle.width, y2: paddle.y + paddle.height}, ball)
-            let isCollidingCpu = checkCollision({x1: cpu_paddle.x, y1: cpu_paddle.y, x2: cpu_paddle.x + cpu_paddle.width, y2: cpu_paddle.y + cpu_paddle.height}, ball)
-
-
-            if (isCollidingPlayer) {
-                ball.xv *= -1;
-                score += 1;
-                console.log(score);
-            }
-
-            if (isCollidingCpu) {
-                ball.xv *= -1;
-            }
+            
 
             if (ball.x <= ball.r || ball.x >= 800 - ball.r) {
                 gameStart();
