@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Pong</title>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600" style="background-color: black;"></canvas>
+    <script>
+        let ctx = document.getElementById("canvas").getContext("2d");
+
+        let paddle, ball, dy, cpu_paddle;
+
+        function gameStart() {
+            paddle = {
+                height: 100,
+                width: 20,
+                x: 50,
+                y: 100,
+                min_y: 0,
+                max_y: 500,
+            };
+
+            ball = {
+                r: 10,
+                x: 400,
+                y: 300,
+                xv: 3,
+                yv: 3,
+            };
+
+            cpu_paddle = {
+                height: paddle.height,
+                width: paddle.width,
+                x: 750,
+                y: 100,
+                min_y: 0,
+                max_y: 500,
+            }
+
+            dy = 5;
+    }
+        gameStart();
+
+        document.addEventListener("keydown", e => {
+            console.log('Key pressed: ', event.key)
+            switch (e.key) {
+                case "ArrowUp": dy = -20;
+                break;
+                case "ArrowDown": dy = 20;
+                break;
+            }
+        });
+
+        function checkCollision(line, circle) {
+            let ax = circle.x - line.x1;
+            let bx = line.x2 - line.x1;
+            let ay = circle.y - line.y1;
+            let by = line.y2 - line.y1;
+            let dot = ax * bx + ay * by;
+            let c = Math.sqrt(Math.pow(bx, 2) + Math.pow(by, 2));
+            let scalar = dot / c;
+            let point = {
+                x: scalar * (bx / c) + line.x1,
+                y: scalar * (by / c) + line.y1,
+            }
+            let c2 = Math.sqrt(Math.pow(circle.x - point.x, 2) + (Math.pow(circle.y - point.y, 2)));
+            return (c2 <= circle.r && circle.y > line.y1 && circle.y < line.y2)
+
+        };
+
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, 800, 600);
+
+            ball.x += ball.xv;
+            ball.y += ball.yv;
+
+            paddle.y += dy;
+
+            cpu_paddle.y = ball.y - cpu_paddle.height / 2;
+
+            if (cpu_paddle.y > cpu_paddle.max_y) {
+                cpu_paddle.y = cpu_paddle.max_y;
+            }
+
+            if (cpu_paddle.y < cpu_paddle.min_y) {
+                cpu_paddle.y = cpu_paddle.min_y;
+            }
+
+            if (paddle.y > paddle.max_y) {
+                paddle.y = paddle.max_y
+            }
+
+            if (paddle.y < paddle.min_y) {
+                paddle.y = paddle.min_y
+            }
+
+            let isColliding = checkCollision({x1: paddle.x, y1: paddle.y, x2: paddle.x + paddle.width, y2: paddle.y + paddle.height}, ball) || 
+            checkCollision({x1: cpu_paddle.x, y1: cpu_paddle.y, x2: cpu_paddle.x + cpu_paddle.width, y2: cpu_paddle.y + cpu_paddle.height}, ball)
+
+            console.log(isColliding)
+
+            if (isColliding) {
+                ball.xv *= -1;
+            }
+
+            if (ball.x <= ball.r || ball.x >= 800 - ball.r) {
+                gameStart();
+            }
+            
+            if (ball.y <= ball.r || ball.y >= 600 - ball.r) {
+                ball.yv *= -1;
+            }
+
+            
+
+            ctx.fillStyle = "white";
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+            ctx.fillRect(cpu_paddle.x, cpu_paddle.y, cpu_paddle.width, cpu_paddle.height);
+            
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
+            ctx.fill();
+
+
+            dy = 0;
+        };
+
+        let loopInterval = setInterval(gameLoop, 1000/60);
+
+    </script>
+</body>
+</html>
