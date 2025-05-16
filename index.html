@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Not Pong</title>
 </head>
 <body>
@@ -10,7 +11,7 @@
     <script>
         let ctx = document.getElementById("canvas").getContext("2d");
 
-        let paddle, ball, dy, cpu_paddle;
+        let paddle, ball, dy, cpu_paddle, score;
 
         function gameStart() {
             paddle = {
@@ -40,6 +41,8 @@
             }
 
             dy = 5;
+
+            score = 0;
     }
         gameStart();
 
@@ -97,12 +100,17 @@
                 paddle.y = paddle.min_y
             }
 
-            let isColliding = checkCollision({x1: paddle.x, y1: paddle.y, x2: paddle.x + paddle.width, y2: paddle.y + paddle.height}, ball) || 
-            checkCollision({x1: cpu_paddle.x, y1: cpu_paddle.y, x2: cpu_paddle.x + cpu_paddle.width, y2: cpu_paddle.y + cpu_paddle.height}, ball)
+            let isCollidingPlayer = checkCollision({x1: paddle.x, y1: paddle.y, x2: paddle.x + paddle.width, y2: paddle.y + paddle.height}, ball)
+            let isCollidingCpu = checkCollision({x1: cpu_paddle.x, y1: cpu_paddle.y, x2: cpu_paddle.x + cpu_paddle.width, y2: cpu_paddle.y + cpu_paddle.height}, ball)
 
-            console.log(isColliding)
 
-            if (isColliding) {
+            if (isCollidingPlayer) {
+                ball.xv *= -1;
+                score += 1;
+                console.log(score);
+            }
+
+            if (isCollidingCpu) {
                 ball.xv *= -1;
             }
 
@@ -125,6 +133,8 @@
             ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
             ctx.fill();
 
+            document.getElementById("score").textContent = "SCORE: " + score;
+
 
             dy = 0;
         };
@@ -132,5 +142,6 @@
         let loopInterval = setInterval(gameLoop, 1000/60);
 
     </script>
+    <h1 id="score"></h1>
 </body>
 </html>

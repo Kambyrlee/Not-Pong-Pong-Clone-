@@ -1,0 +1,13 @@
+@font-face {
+    font-family: orangeKid;
+    src: url(orange_kid.otf);
+}
+
+* {
+    font-family: orangeKid;
+}
+
+#score {
+    position: relative;
+    left: 350px;
+}
