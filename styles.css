@@ -11,3 +11,8 @@
     position: relative;
     left: 350px;
 }
+
+#score_container {
+    background-color: limegreen;
+    width: 800px;
+}
